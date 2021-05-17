@@ -4,6 +4,8 @@ const router = require('express').Router();
 const SudokuSolver = require('../controllers/sudoku-solver.js');
 const solver = new SudokuSolver();
 
+const { allFieldValidator, placementValidator, puzzleValidator } = require("../middlewares/validatorMiddleware");
+
 // SOLVE endpoint
 
 
@@ -17,38 +19,22 @@ const solver = new SudokuSolver();
 
 // CHECK endpoint
 
-router.post("/check", (req, res, next) => {
+router.post("/check", allFieldValidator, puzzleValidator, placementValidator, (req, res) => {
     const { puzzle, coordinate, value } = req.body;
-    if (!puzzle || !coordinate || !value) {
+    const checkRow = solver.checkRowPlacement(puzzle, coordinate[0], coordinate[1], value);
+    const checkCol = solver.checkColPlacement(puzzle, coordinate[0], coordinate[1], value);
+    const checkReg = solver.checkRegionPlacement(puzzle, coordinate[0], coordinate[1], value);
+    const conflict = [checkRow.conflict, checkCol.conflict, checkReg.conflict].filter(c => c && 1);
+    if (conflict.length >= 1) {
         res.json({
-            error: "Required field(s) missing"
+            valid: false,
+            conflict
         });
-        next("missing fields")
+        return;
     }
-    const validatePuzzle = puzzle ? solver.validate(puzzle) : null;
-    if (!validatePuzzle?.valid) {
-        res.json({
-            error: validatePuzzle.message
-        });
-        next("invalid puzzle");
-    }
-    const validateValue = value ? solver.validateValue(value) : null;
-    if (!validateValue.valid) {
-        res.json({
-            error: validateValue.message
-        });
-        next("invalid value");
-    }
-    const validateCoord = coordinate ? solver.validateCoord(coordinate[0], coordinate[1]) : null;
-    if (!validateCoord?.valid) {
-        res.json({
-            error: validateCoord.message
-        });
-        next("invalid coordinate")
-    }
-    next();
-}, (req, res) => {
-    console.log("Dd");
+    res.json({
+        valid: true
+    });
 });
 
 
