@@ -10,6 +10,20 @@ class SudokuSolver {
         return { message: "valid", valid: true };
     }
 
+    validateCoord(row, column) {
+        if (!/^[A-I]$/.test(row) || !/^[1-9]$/.test(column)) {
+            return { valid: false, message: "Invalid coordinate" };
+        }
+        return { valid: true, message: "valid coordinate"};
+    }
+
+    validateValue(value) {
+        if (!/^[1-9]$/.test(value)) {
+            return { valid: false, message: "Invalid value" };
+        }
+        return { valid: true, message: "valid value" };
+    }
+
     validateColRowVal(row, column, value) {
         const validate = this.validate(puzzleString);
         column = String(column);
@@ -17,12 +31,11 @@ class SudokuSolver {
         if (!validate.valid) {
             return validate;
         }
-        if (!/^[A-I]$/.test(row) || !/^[1-9]$/.test(column)) {
-            return { valid: false, message: "Invalid coordinate" };
-        }
-        if (!/^[1-9]$/.test(value)) {
-            return { valid: false, message: "Invalid value" };
-        }
+        const validateCoord = this.validateCoord(row, column);
+        const validateValue = this.validateValue(value);
+        if (!validateValue.valid) return validateValue;
+        if (!validateCoord.valid) return validateCoord;
+        return { valid: true, message: "valid row col and value" };
     }
 
     checkRowPlacement(puzzleString, row, column, value) {
