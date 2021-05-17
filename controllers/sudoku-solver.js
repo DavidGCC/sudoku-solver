@@ -1,23 +1,68 @@
 class SudokuSolver {
 
-  validate(puzzleString) {
-  }
+    validate(puzzleString) {
+        if (puzzleString.length !== 81) {
+            return { message: "Expected puzzle to be 81 characters long", valid: false };
+        }
+        if (!/^[0-9\.]{81}$/.test(puzzleString)) {
+            return { message: "Invalid characters in puzzle", valid: false };
+        }
+        return { message: "valid", valid: true };
+    }
 
-  checkRowPlacement(puzzleString, row, column, value) {
+    validateColRowVal(row, column, value) {
+        const validate = this.validate(puzzleString);
+        column = String(column);
+        value = String(value);
+        if (!validate.valid) {
+            return validate;
+        }
+        if (!/^[A-I]$/.test(row) || !/^[1-9]$/.test(column)) {
+            return { valid: false, message: "Invalid coordinate" };
+        }
+        if (!/^[1-9]$/.test(value)) {
+            return { valid: false, message: "Invalid value" };
+        }
+    }
 
-  }
+    checkRowPlacement(puzzleString, row, column, value) {
+        column = String(column);
+        value = String(value);
+        const validate = this.validateColRowVal(row, column, value);
+        if (!validate.valid) return validate;
+        const rowString = puzzleString.substr(9 * (row.charCodeAt(0) - 65), 9);
+        if (rowString.includes(value) && rowString[Number(column) - 1] !== value ) {
+            return { valid: false, conflict: "row" }
+        }
+        return { valid: true, conflict: null }
+    }
 
-  checkColPlacement(puzzleString, row, column, value) {
+    checkColPlacement(puzzleString, row, column, value) {
+        column = String(column);
+        value = String(value);
+        const validate = this.validateColRowVal(row, column, value);
+        if (!validate.valid) return validate;
+        let colString = "";
+        for (let i = 0; i < 9; i++) {
+            colString += puzzleString[Number(value) - 1 + 9 * i];
+        }
+        if (colString.includes(value) && colString[Number(row.charCodeAt(0) - 65)] !== value) {
+            return { valid: false, conflict: "column" }
+        }
+        return { valid: true, conflict: null }
+    }
 
-  }
+    checkRegionPlacement(puzzleString, row, column, value) {
+        column = String(column);
+        value = String(value);
+        const validate = this.validateColRowVal(row, column, value);
+        if (!validate.valid) return validate;
+        let regionString = "";
+    }
 
-  checkRegionPlacement(puzzleString, row, column, value) {
+    solve(puzzleString) {
 
-  }
-
-  solve(puzzleString) {
-    
-  }
+    }
 }
 
 module.exports = SudokuSolver;
