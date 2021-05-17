@@ -31,7 +31,7 @@ class SudokuSolver {
         const validate = this.validateColRowVal(row, column, value);
         if (!validate.valid) return validate;
         const rowString = puzzleString.substr(9 * (row.charCodeAt(0) - 65), 9);
-        if (rowString.includes(value) && rowString[Number(column) - 1] !== value ) {
+        if (rowString.includes(value) && rowString[Number(column) - 1] !== value) {
             return { valid: false, conflict: "row" }
         }
         return { valid: true, conflict: null }
@@ -53,11 +53,22 @@ class SudokuSolver {
     }
 
     checkRegionPlacement(puzzleString, row, column, value) {
-        column = String(column);
+        column = String(column - 1);
         value = String(value);
+        row = row.charCodeAt(0) - 65;
         const validate = this.validateColRowVal(row, column, value);
         if (!validate.valid) return validate;
         let regionString = "";
+        for (let i = 0; i < 3; i++) {
+            const colIterator = Number(column) - Number(column) % 3;
+            const rowIterator = Number(row) - Number(row) % 3 + i;
+            regionString += puzzleString[colIterator + rowIterator] + puzzleString[colIterator + rowIterator + 1] 
+                + puzzleString[colIterator + rowIterator + 2];
+        }
+        if (regionString.includes(value) && regionString[Number(column) % 3 + Number(row) % 3 * 3] !== value) {
+            return { valid: false, conflict: "region" }
+        }
+        return { valid: true, conflict: null };
     }
 
     solve(puzzleString) {
