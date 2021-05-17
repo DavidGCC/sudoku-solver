@@ -4,7 +4,7 @@ const solver = new SudokuSolver();
 
 const allFieldValidator = (req, res, next) => {
     const { puzzle, coordinate, value } = req.body;
-    if (!puzzle || !coordinate || !value) {
+    if (!puzzle || !coordinate || typeof value === "undefined") {
         res.json({
             error: "Required field(s) missing"
         });
@@ -12,7 +12,7 @@ const allFieldValidator = (req, res, next) => {
     }
     next();
 }
-
+ 
 const puzzleValidator = (req, res, next) => {
     const { puzzle } = req.body;
     if (!puzzle) {
@@ -34,7 +34,7 @@ const puzzleValidator = (req, res, next) => {
 
 const placementValidator = (req, res, next) => {
     const { coordinate, value } = req.body;
-    const validateValue = value ? solver.validateValue(value) : null;
+    const validateValue = typeof value !== "undefined" ? solver.validateValue(value) : null;
     if (!validateValue.valid) {
         res.json({
             error: validateValue.message
