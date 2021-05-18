@@ -84,8 +84,22 @@ class SudokuSolver {
         return { valid: true, conflict: null };
     }
 
-    solve(puzzleString) {
+    checkInput(puzzleString, row, column, value) {
+        const valRow = this.checkRowPlacement(puzzleString, row, column, value);
+        const valCol = this.checkColPlacement(puzzleString, row, column, value);
+        const valReg = this.checkRegionPlacement(puzzleString, row, column, value);
+        if (!valRow.valid || !valCol.valid || !valReg.valid) {
+            return false;
+        }
+        return true;
+    }
 
+    rowToIndex(row) {
+        return row.charCodeAt(0) - 65;
+    }
+
+    solve(puzzleString) {
+        
     }
 }
 
