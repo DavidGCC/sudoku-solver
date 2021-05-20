@@ -74,7 +74,7 @@ suite('Functional Tests', () => {
 
     });
 
-    suite.only("/api/check POST request tests", () => {
+    suite("/api/check POST request tests", () => {
 
         test("Check a puzzle placement with all fields: POST request to /api/check", (done) => {
             chai.request(server)

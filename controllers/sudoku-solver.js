@@ -98,8 +98,8 @@ class SudokuSolver {
 
         const sRow = row - row % 3;
         const sCol = column - column % 3;
-        for (let i = 0; i < sRow; i++) {
-            for (let j = 0; j < sCol; j++) {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
                 if (puzzleString[(sRow + i) * 9 + (sCol + j)] === value) return false;
             }
         }
@@ -126,7 +126,7 @@ class SudokuSolver {
                 if (this.checkPlacement(solved, row, column, String(i))) {
                     solved = replaceChar(solved, row * 9 + column, i);
 
-                    if (s(row, column)) {
+                    if (s(row, column + 1)) {
                         return true;
                     }
                 }

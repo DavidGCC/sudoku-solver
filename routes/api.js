@@ -7,8 +7,18 @@ const solver = new SudokuSolver();
 const { allFieldValidator, placementValidator, puzzleValidator } = require("../middlewares/validatorMiddleware");
 
 // SOLVE endpoint
-
-
+router.post("/solve", puzzleValidator, (req, res) => {
+    const solution = solver.solve(req.body.puzzle);
+    if (solution) {
+        res.json({
+            solution
+        });
+    } else {
+        res.json({
+            error: "Puzzle cannot be solved"
+        });
+    }
+});
 
 
 
