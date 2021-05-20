@@ -1,3 +1,6 @@
+const { replaceChar } = require("../utils");
+
+
 class SudokuSolver {
 
     validate(puzzleString) {
@@ -14,7 +17,7 @@ class SudokuSolver {
         if (!/^[A-I]$/.test(row) || !/^[1-9]$/.test(column)) {
             return { valid: false, message: "Invalid coordinate" };
         }
-        return { valid: true, message: "valid coordinate"};
+        return { valid: true, message: "valid coordinate" };
     }
 
     validateValue(value) {
@@ -75,8 +78,8 @@ class SudokuSolver {
         for (let i = 0; i < 3; i++) {
             const colIterator = Number(column) - Number(column) % 3;
             const rowIterator = (Number(row) - Number(row) % 3) + i * 9;
-            regionString += puzzleString[colIterator + rowIterator] + puzzleString[colIterator + rowIterator + 1] 
-            + puzzleString[colIterator + rowIterator + 2];
+            regionString += puzzleString[colIterator + rowIterator] + puzzleString[colIterator + rowIterator + 1]
+                + puzzleString[colIterator + rowIterator + 2];
         }
         if (regionString.includes(value) && regionString[Number(column) % 3 + Number(row) % 3 * 3] !== value) {
             return { valid: false, conflict: "region" }
@@ -84,22 +87,59 @@ class SudokuSolver {
         return { valid: true, conflict: null };
     }
 
-    checkInput(puzzleString, row, column, value) {
-        const valRow = this.checkRowPlacement(puzzleString, row, column, value);
-        const valCol = this.checkColPlacement(puzzleString, row, column, value);
-        const valReg = this.checkRegionPlacement(puzzleString, row, column, value);
-        if (!valRow.valid || !valCol.valid || !valReg.valid) {
-            return false;
+    checkPlacement(puzzleString, row, column, value) {
+        for (let i = 0; i < 9; i++) {
+            if (puzzleString[row * 9 + i] === value) return false;
+        }
+
+        for (let i = 0; i < 9; i++) {
+            if (puzzleString[i * 9 + column] === value) return false;
+        }
+
+        const sRow = row - row % 3;
+        const sCol = column - column % 3;
+        for (let i = 0; i < sRow; i++) {
+            for (let j = 0; j < sCol; j++) {
+                if (puzzleString[(sRow + i) * 9 + (sCol + j)] === value) return false;
+            }
         }
         return true;
     }
 
-    rowToIndex(row) {
-        return row.charCodeAt(0) - 65;
-    }
-
     solve(puzzleString) {
-        
+        let solved = puzzleString;
+        const s = (row, column) => {
+            if (row === 8 && column === 9) {
+                return true;
+            }
+    
+            if (column === 9) {
+                row++;
+                column = 0;
+            }
+    
+            if (solved[row * 9 + column] !== ".") {
+                return s(row, column + 1);
+            }
+    
+            for (let i = 1; i <= 9; i++) {
+                if (this.checkPlacement(solved, row, column, String(i))) {
+                    solved = replaceChar(solved, row * 9 + column, i);
+
+                    if (s(row, column)) {
+                        return true;
+                    }
+                }
+    
+                solved = replaceChar(solved, row * 9 + column, ".");
+            }
+            return false;
+        }
+        if (s(0, 0)) {
+            return solved;
+        } else {
+            return false;
+        }
     }
 }
 
