@@ -6,7 +6,7 @@ const server = require('../server');
 chai.use(chaiHttp);
 
 const ps = "..9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6..";
-const solvedPs = "135762984946381257728459613694517832812936745357824196473298561581673429269145378";
+const solvedPs = "769235418851496372432178956174569283395842761628713549283657194516924837947381625";
 
 suite('Functional Tests', () => {
 
@@ -19,9 +19,9 @@ suite('Functional Tests', () => {
                 .send({ puzzle: ps })
                 .end((err, res) => {
                     assert.equal(res.status, 200);
-                    assert.deepEqual(res.body, { result: solvedPs });
-                    assert.equal(res.body.result.includes("."), false);
-                    assert.equal(/^[1-9]{81}$/.test(res.body.result), true);
+                    assert.deepEqual(res.body, { solution: solvedPs });
+                    assert.equal(res.body.solution.includes("."), false);
+                    assert.equal(/^[1-9]{81}$/.test(res.body.solution), true);
                     done();
                 });
         });
@@ -31,7 +31,7 @@ suite('Functional Tests', () => {
                 .post("/api/solve")
                 .end((err, res) => {
                     assert.equal(res.status, 200);
-                    assert.deepEqual(res.body, { error: "Required field missing" });
+                    assert.deepEqual(res.body, { error: "Required field(s) missing" });
                     done();
                 });
         });
@@ -70,7 +70,7 @@ suite('Functional Tests', () => {
                     assert.deepEqual(res.body, { error: "Puzzle cannot be solved" });
                     done();
                 })
-        });
+        }).timeout(10000);
 
     });
 

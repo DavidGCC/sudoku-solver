@@ -107,6 +107,8 @@ class SudokuSolver {
     }
 
     solve(puzzleString) {
+        const validate = this.validate(puzzleString);
+        if (!validate.valid) return validate;
         let solved = puzzleString;
         const s = (row, column) => {
             if (row === 8 && column === 9) {
