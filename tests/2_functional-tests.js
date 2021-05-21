@@ -70,7 +70,7 @@ suite('Functional Tests', () => {
                     assert.deepEqual(res.body, { error: "Puzzle cannot be solved" });
                     done();
                 })
-        }).timeout(10000);
+        }).timeout(100000);
 
     });
 
