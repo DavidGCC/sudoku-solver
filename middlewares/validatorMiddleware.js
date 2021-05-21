@@ -17,9 +17,9 @@ const puzzleValidator = (req, res, next) => {
     const { puzzle } = req.body;
     if (!puzzle) {
         res.json({
-            error: "Required field(s) missing"
+            error: "Required field missing"
         });
-        next("missing fields");
+        next("missing puzzle");
     }
 
     const validatePuzzle = puzzle ? solver.validate(puzzle) : null;
